@@ -29,15 +29,24 @@ class NewsListRepository {
                 let data = try Data(contentsOf: url, options: .mappedIfSafe)
                 
                 let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .formatted(DateFormatter.iso8601Full)
                 let newsModelList = try decoder.decode([NewsModel].self, from: data)
                 completion(newsModelList, nil)
             } catch {
+                print("\(error)")
                 completion(nil, error)
             }
        } else {
            completion(nil, NewsListError.fileNotFound)
        }
     }
+    }
+
+extension DateFormatter {
     
-    
+    static let iso8601Full: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'H:mm:ssZ"
+        return formatter
+    }()
 }
